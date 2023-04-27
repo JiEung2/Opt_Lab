@@ -15,76 +15,83 @@ class EXP{
 }
 
 public class Algorithm23 {
-	static String fileName = "RSPP_100_1_SUB";
-	static String filePath = "C:\\Users\\``\\eclipse-workspace\\cplex\\result\\";
-	static String fileType = ".txt";
+
 	
 	static ArrayList<EXP> list;
 	static LinkedHashSet<EXP> set;
 	
 	public static void main(String[] args) throws IOException{
-		long start = System.currentTimeMillis();
-		set = new LinkedHashSet<>();
-		App.solveMe();
-		double m1, m2, s1, s2;
-		
-		m1 = SUB(1,0)[0];
-		s1 = SUB(1,0)[1];
-		set.add(new EXP(m1,s1));
-		m2 = SUB(0,1)[0];
-		s2 = SUB(0,1)[1];
-		set.add(new EXP(m2,s2));
-		
-		NEWSOL(m1,s1,m2,s2);
-		
-		Iterator<EXP> iter = set.iterator();
-		while(iter.hasNext()) {
-			EXP e = iter.next();
-			try {
-				BufferedWriter fw = new BufferedWriter(new FileWriter(filePath+fileName+fileType, true));
-				fw.newLine();
-				fw.write(Double.toString(e.m));
-				fw.write(" ");
-				fw.write(Double.toString(e.s));
-				fw.write(" ");
-				fw.write(Double.toString((App.Obj*1.1 - e.m)/Math.sqrt(e.s)));
-				//fw.newLine();
+		for(int i=1; i<=5; i++) {
+			for(int j=1; j<=5; j++) {
+				String fileName = "RSPP_"+i+"00_"+j+"_SUB_1.2";
+				String filePath = "C:\\Users\\``\\eclipse-workspace\\cplex\\result\\1.2\\";
+				String fileType = ".txt";
+				long start = System.currentTimeMillis();
+				set = new LinkedHashSet<>();
+				App.solveMe(i,j);
+				double m1, m2, s1, s2;
 				
+				m1 = SUB(1,0,i,j)[0];
+				s1 = SUB(1,0,i,j)[1];
+				set.add(new EXP(m1,s1));
+				m2 = SUB(0,1,i,j)[0];
+				s2 = SUB(0,1,i,j)[1];
+				set.add(new EXP(m2,s2));
 				
-				fw.flush();
-				fw.close();
+				NEWSOL(m1,s1,m2,s2,i,j);
+				double max = 0;
+				Iterator<EXP> iter = set.iterator();
+				while(iter.hasNext()) {
+					EXP e = iter.next();
+					max = Math.max(max, (App.Obj*1.2 - e.m)/Math.sqrt(e.s));
+				}
+				long end = System.currentTimeMillis();
+				double time = (end - start) / 1000.0;
+				
+				System.out.println("실행시간 = " + time + "초");
+				try {
+					BufferedWriter fw = new BufferedWriter(new FileWriter(filePath+fileName+fileType, true));
+					fw.write(fileName);
+					fw.write(" ");
+					fw.write(Double.toString(max));
+					fw.write(" ");
+					fw.write(Double.toString(time));
+					
+					
+					//fw.newLine();
+					
+					
+					fw.flush();
+					fw.close();
+				}
+				catch(Exception a) {
+					a.getStackTrace();
+				}
+				
 			}
-			catch(Exception a) {
-				a.getStackTrace();
-			}
-			System.out.println(e.m +" "+e.s+" "+ (App.Obj*1.1 - e.m)/Math.sqrt(e.s) );
 		}
-		long end = System.currentTimeMillis();
-		double time = (end - start) / 1000.0;
 		
-		System.out.println("실행시간 = " + time + "초");
-		System.exit(0);
 	}
 	
-	public static void NEWSOL(double m1, double s1, double m2, double s2) throws IOException {
+	public static void NEWSOL(double m1, double s1, double m2, double s2, int index1, int index2) throws IOException {
 		double m3=0, s3=0;
 		if(m1!=m2) {
 			double tmp = -((s2-s1)/(m2-m1));
-			m3 = SUB(tmp, 1)[0];
-			s3 = SUB(tmp, 1)[1];
+			m3 = SUB(tmp, 1,index1, index2)[0];
+			s3 = SUB(tmp, 1,index1, index2)[1];
 		}
 		else {
-			m3 = SUB(1,0)[0];
-			s3 = SUB(1,0)[1];
+			m3 = SUB(1,0,index1,index2)[0];
+			s3 = SUB(1,0,index1,index2)[1];
 		}
 		if((m3!=m1|| s3!=s1) && (m3!=m2 ||s3!=s2)) {
 			set.add(new EXP(m3,s3));
-			NEWSOL(m1,s1,m3,s3);
-			NEWSOL(m2,s2,m3,s3);
+			NEWSOL(m1,s1,m3,s3,index1,index2);
+			NEWSOL(m2,s2,m3,s3,index1,index2);
 		}
 		
 	}
-	public static void result(String filePath, String fileName, String fileType, double time, double Obj, int nodes) {
+	/*public static void result(String filePath, String fileName, String fileType, double time, double Obj, int nodes) {
 		try {
 			BufferedWriter fw = new BufferedWriter(new FileWriter(filePath+fileName+fileType, true));
 			fw.write(Double.toString(time));
@@ -100,16 +107,16 @@ public class Algorithm23 {
 		catch(Exception e) {
 			e.getStackTrace();
 		}
-	}
+	}*/
 
 	public static double Obj = 0;
 	public static int nodes = 0;
 	
-	public static double[] SUB(double c1, double c2) throws IOException{
+	public static double[] SUB(double c1, double c2, int index1, int index2) throws IOException{
 		
 		double[] answer = new double[2];
 		try {
-			GetData.main(null);
+			GetData.main(null,index1, index2);
 		
 			int s = GetData.s-1;
 			int d = GetData.d-1;
@@ -196,7 +203,7 @@ public class Algorithm23 {
 			 
 			
 			//파일 생성
-			result(filePath, fileName, fileType, time, Obj, nodes);
+			//result(filePath, fileName, fileType, time, Obj, nodes);
 			
 			
 		
