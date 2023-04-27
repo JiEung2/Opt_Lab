@@ -11,9 +11,9 @@ public class GetData {
 	public static double[][] StandardDeviation = null;
 	public static int s = 0, d = 0;
 
-	public static void main(String[] args) {
+	public static void main(String[] args, int index1, int index2) {
 		
-		Path path = Paths.get("C:\\Users\\``\\eclipse-workspace\\cplex\\data\\RSPP_100_1.txt");
+		Path path = Paths.get("C:\\Users\\``\\eclipse-workspace\\cplex\\data\\RSPP_"+index1+"00_"+index1+".txt");
 		
 		
 		try {
