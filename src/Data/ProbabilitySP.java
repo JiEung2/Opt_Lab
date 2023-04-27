@@ -10,13 +10,14 @@ public class ProbabilitySP {
 	public static void result(String filePath, String fileName, String fileType, double time, double Obj, int nodes) {
 		try {
 			BufferedWriter fw = new BufferedWriter(new FileWriter(filePath+fileName+fileType, true));
-			fw.write(Double.toString(time));
-			fw.newLine();
+			fw.write(fileName);
+			fw.write(" ");
 			fw.write(Double.toString(Obj));
-			
-			fw.newLine();
+			fw.write(" ");
 			fw.write(Integer.toString(nodes));
-			fw.newLine();
+			fw.write(" ");
+			fw.write(Double.toString(time));
+		
 			fw.flush();
 			fw.close();
 		}
@@ -29,14 +30,14 @@ public class ProbabilitySP {
 	public static double Obj2 = 0;
 	public static int nodes2 = 0;
 
-	public static void solve() {
+	public static void solve(int index1, int index2) {
 		
-		String fileName = "RSPP_100_1_PSP";
-		String filePath = "C:\\\\Users\\\\``\\\\eclipse-workspace\\\\cplex\\\\result\\\\";
+		String fileName = "1RSPP_"+index1+"00_"+index2+"_PSP_1.2";
+		String filePath = "C:\\\\Users\\\\``\\\\eclipse-workspace\\\\cplex\\\\result\\1.2\\PSP\\";
 		String fileType = ".txt";
 		try {
-			GetData.main(null);
-			App.solveMe();
+			GetData.main(null, index1, index2);
+			App.solveMe(index1, index2);
 			int s, t = 0;
 			s = GetData.s; //출발지
 			t = GetData.d; //도착지
@@ -87,7 +88,7 @@ public class ProbabilitySP {
 				}
 			}
 			
-			double b = App.Obj * 1.1;
+			double b = App.Obj * 1.2;
 			IloLinearNumExpr const4 = cplex.linearNumExpr();
 			for(int i=0; i<n;i++) {
 				for(int j=0; j<m; j++) {
@@ -156,8 +157,8 @@ public class ProbabilitySP {
 			System.out.println("목적함수 값 = " + Obj2);
 			System.out.println("노드수 = " + nodes2);
 			
-			String fileName2 = "RSPP_100_1_psp";
-			result(filePath, fileName2, fileType, time, Obj2, nodes2);
+			//String fileName2 = "RSPP_100_1_psp";
+			result(filePath, fileName, fileType, time, Obj2, nodes2);
 		}
 		catch(IloException exc) {
 			exc.printStackTrace();
