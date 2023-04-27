@@ -13,7 +13,7 @@ public class GetData {
 
 	public static void main(String[] args, int index1, int index2) {
 		
-		Path path = Paths.get("C:\\Users\\``\\eclipse-workspace\\cplex\\data\\RSPP_"+index1+"00_"+index1+".txt");
+		Path path = Paths.get("C:\\Users\\``\\eclipse-workspace\\cplex\\data\\RSPP_"+index1+"00_"+index2+".txt");
 		
 		
 		try {
