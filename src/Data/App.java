@@ -26,12 +26,12 @@ public class App {
 	public static double Obj = 0;
 	public static int nodes = 0;
 	
-	public static void solveMe(int index1, int index2) {
-//		String fileName = "RSPP_100_1";
-//		String filePath = "C:\\Users\\``\\eclipse-workspace\\cplex\\result\\";
-//		String fileType = ".txt";
+	public static void solveMe() {
+		String fileName = "RSPP_100_1";
+		String filePath = "C:\\Users\\``\\eclipse-workspace\\cplex\\result\\";
+		String fileType = ".txt";
 		try {
-			GetData.main(null, index1, index2);
+			GetData.main(null);
 		
 			int s = GetData.s-1;
 			int d = GetData.d-1;
@@ -119,7 +119,7 @@ public class App {
 			 
 			
 			//파일 생성
-			//result(filePath, fileName, fileType, time, Obj, nodes);
+			result(filePath, fileName, fileType, time, Obj, nodes);
 			
 		
 		}

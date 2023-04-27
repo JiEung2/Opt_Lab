@@ -20,7 +20,9 @@ public class Dijkstra2 {
 	static double[][] sd;
 	static double[][] tt;
 	
-	
+	static String fileName = "RSPP_500_5_Dijkstra";
+	static String filePath = "C:\\Users\\``\\eclipse-workspace\\cplex\\result\\";
+	static String fileType = ".txt";
 	
 	//가장 짧은 거리를 가지고 있는 노드를 찾음
 	static int findMinDistance(double d[], boolean T[], int n) {
@@ -105,72 +107,78 @@ public class Dijkstra2 {
 	
 	public static void main(String[] args) throws IOException {
 		// TODO Auto-generated method stub
-		for(int i1=1; i1<=5; i1++) {
-			for(int j1=1; j1<=5; j1++) {
-				String fileName = "RSPP_"+i1+"00_"+j1+"_Dijkstra_1.2";
-				String filePath = "C:\\Users\\``\\eclipse-workspace\\cplex\\result\\1.2\\Di\\";
-				String fileType = ".txt";
-				long start = System.currentTimeMillis();
-				set = new LinkedHashSet<>();
-				GetData.main(null, i1, j1);
-				App.solveMe(i1, j1);
+		long start = System.currentTimeMillis();
+		set = new LinkedHashSet<>();
+		GetData.main(null);
+		App.solveMe();
 
-				double m1, m2, s1, s2;
-				n = GetData.nodenum;
-				s = GetData.s-1;
-				t = GetData.d-1;
-				sd = new double[n][n];
-				tt = new double[n][n];
-				for(int i=0; i<n; i++) {
-					for(int j=0; j<n; j++) {
-						sd[i][j] = GetData.StandardDeviation[i][j]*GetData.StandardDeviation[i][j];	
-					}
-				}
-				tt = GetData.TravelTime;
-				
-				m1 = Dijkstra2.dijkstra(1, 0)[0];
-				s1 = Dijkstra2.dijkstra(1, 0)[1];
-				set.add(new Point(m1,s1));
-				//System.out.println(Dijkstra2.dijkstra(1, 0)[0]);
-				//System.out.println(m1);
-				m2 = Dijkstra2.dijkstra(0, 1)[0];
-				s2 = Dijkstra2.dijkstra(0, 1)[1];
-				set.add(new Point(m2,s2));
-				System.out.println(m2+" "+ s2);
-				NEWSOL(m1,s1,m2,s2);
-				
-				Iterator<Point> iter = set.iterator();
-				double max = 0;
-				while(iter.hasNext()) {
-					Point e = iter.next();
-					max = Math.max(max, (App.Obj*1.2 - e.m)/Math.sqrt(e.s));
-				}
-				long end = System.currentTimeMillis();
-				double time = (end - start) / 1000.0;
-				
-				System.out.println(set.size());
-				try {
-					BufferedWriter fw = new BufferedWriter(new FileWriter(filePath+fileName+fileType, true));
-					fw.write(fileName);
-					fw.write(" ");
-					fw.write(Double.toString(max));
-					fw.write(" ");
-					fw.write(Integer.toString(set.size()));
-					fw.write(" ");
-					fw.write(Double.toString(time));
-					
-					fw.flush();
-					fw.close();
-				}
-				catch(Exception a) {
-					a.getStackTrace();
-				}
-				System.out.println("실행시간 = " + time + "초");
-				}
+		double m1, m2, s1, s2;
+		n = GetData.nodenum;
+		s = GetData.s-1;
+		t = GetData.d-1;
+		sd = new double[n][n];
+		tt = new double[n][n];
+		for(int i=0; i<n; i++) {
+			for(int j=0; j<n; j++) {
+				sd[i][j] = GetData.StandardDeviation[i][j]*GetData.StandardDeviation[i][j];	
 			}
 		}
+		tt = GetData.TravelTime;
 		
+		m1 = Dijkstra2.dijkstra(1, 0)[0];
+		s1 = Dijkstra2.dijkstra(1, 0)[1];
+		set.add(new Point(m1,s1));
+		//System.out.println(Dijkstra2.dijkstra(1, 0)[0]);
+		//System.out.println(m1);
+		m2 = Dijkstra2.dijkstra(0, 1)[0];
+		s2 = Dijkstra2.dijkstra(0, 1)[1];
+		set.add(new Point(m2,s2));
+		System.out.println(m2+" "+ s2);
+		NEWSOL(m1,s1,m2,s2);
 		
+		Iterator<Point> iter = set.iterator();
+		
+		while(iter.hasNext()) {
+			Point e = iter.next();
+			try {
+				BufferedWriter fw = new BufferedWriter(new FileWriter(filePath+fileName+fileType, true));
+				fw.newLine();
+				fw.write(Double.toString(e.m));
+				fw.write(" ");
+				fw.write(Double.toString(e.s));
+				fw.write(" ");
+				fw.write(Double.toString((App.Obj*1.1 - e.m)/Math.sqrt(e.s)));
+				//fw.newLine();
+				
+				
+				fw.flush();
+				fw.close();
+			}
+			catch(Exception a) {
+				a.getStackTrace();
+			}
+			System.out.println(e.m +" "+e.s+" "+ (App.Obj*1.1 - e.m)/Math.sqrt(e.s) );
+		}
+		long end = System.currentTimeMillis();
+		double time = (end - start) / 1000.0;
+		
+		System.out.println(set.size());
+		try {
+			BufferedWriter fw = new BufferedWriter(new FileWriter(filePath+fileName+fileType, true));
+			fw.newLine();
+			fw.write(Integer.toString(set.size()));
+			fw.newLine();
+			fw.write(Double.toString(time));
+			
+			fw.flush();
+			fw.close();
+		}
+		catch(Exception a) {
+			a.getStackTrace();
+		}
+		System.out.println("실행시간 = " + time + "초");
+		System.exit(0);
+	}
 	public static void NEWSOL(double m1, double s1, double m2, double s2) throws IOException {
 		double m3=0, s3=0;
 		if(m1!=m2) {
